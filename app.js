@@ -5,6 +5,13 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Routes
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+
+app.use('/admin', adminRoutes);
+app.use('/', shopRoutes);
+
 app.get('/', (req, res) => {
   res.send('Hello');
 });
