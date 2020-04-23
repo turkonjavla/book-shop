@@ -16,6 +16,10 @@ app.get('/', (req, res) => {
   res.send('Hello');
 });
 
+app.use((req, res) => {
+  res.status(404).send(`<h2>Page not found</h2>`);
+});
+
 app.listen(3000, () => {
   console.log('Server is running');
 });
