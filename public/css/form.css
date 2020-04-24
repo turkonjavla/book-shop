@@ -1,0 +1,27 @@
+.product-form {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.form-control {
+  margin: 1rem 0;
+}
+
+.form-control label {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.form-control label,
+.form-control input {
+  display: block;
+}
+
+.form-control input {
+  border: 0.5px solid #ccc;
+  border-radius: 2px;
+  padding: 0.5rem;
+  width: 20rem;
+}
