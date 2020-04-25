@@ -9,15 +9,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
 
 // Routes
-const adminData = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const errorController = require('./controllers/error');
 
-app.use('/admin', adminData.routes);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
-
-app.use((req, res) => {
-  res.render('404', { pageTitle: '404 | Not Found' });
-});
+app.use(errorController.get404);
 
 app.listen(3000, () => {
   console.log('Server is running');
