@@ -1,6 +1,6 @@
 .product-form {
   position: absolute;
-  top: 20%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -11,7 +11,7 @@
 
 .form-control label {
   font-size: 1.8rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 }
 
 .form-control label,
@@ -19,9 +19,15 @@
   display: block;
 }
 
-.form-control input {
+.form-control input,
+.form-control textarea {
   border: 0.5px solid #ccc;
   border-radius: 2px;
   padding: 0.5rem;
   width: 30rem;
+}
+
+.form-control input:focus,
+.form-control textarea:focus {
+  outline: none;
 }

@@ -11,10 +11,10 @@ block content
         article.card.product-item
           header.card__header
             h1.product__title #{product.title}
-            img.card__image(src="https://images-na.ssl-images-amazon.com/images/I/919slSnW1IL.jpg", alt="A book")
+            img.card__image(src=product.imageUrl, alt=product.title)
           .card__content
-            h2.product__price $19.99
-            p.product__description Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis magnam non quidem numquam in doloribus blanditiis illo ipsum nobis? Obcaecati.
+            h2.product__price $#{product.price}
+            p.product__description #{product.description}
             .card__actions
               button Add to cart
       else
