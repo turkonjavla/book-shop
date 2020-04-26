@@ -1,0 +1,21 @@
+extends ../layouts/main-layout.pug
+
+block styles
+  link(rel="stylesheet", href="/css/main.css")
+  link(rel="stylesheet", href="/css/product.css")
+  
+block content
+  main
+    .grid
+      each product in prods
+        article.card.product-item
+          header.card__header
+            h1.product__title #{product.title}
+            img.card__image(src="https://images-na.ssl-images-amazon.com/images/I/919slSnW1IL.jpg", alt="A book")
+          .card__content
+            h2.product__price $19.99
+            p.product__description Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis magnam non quidem numquam in doloribus blanditiis illo ipsum nobis? Obcaecati.
+            .card__actions
+              button Add to cart
+      else
+        h1 No books yet
