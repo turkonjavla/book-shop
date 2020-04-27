@@ -13,8 +13,9 @@ block content
             h1.product__title #{product.title}
             img.card__image(src=product.imageUrl, alt=product.title)
           .card__content
-            h2.product__price $#{product.price}
-            p.product__description #{product.description}
+            .card-details
+              h2.product__price $#{product.price}
+              p.product__description #{product.description}
             .card__actions
               button Add to cart
       else

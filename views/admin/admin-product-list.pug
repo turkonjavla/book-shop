@@ -5,4 +5,19 @@ block styles
   
 block content
   main
-    h2 Admin products
+    .grid
+      each product in prods
+        article.card.product-item
+          header.card__header
+            h1.product__title #{product.title}
+            img.card__image(src=product.imageUrl, alt=product.title)
+          .card__content
+            .card-details
+              h2.product__price $#{product.price}
+              p.product__description #{product.description}
+            .card__actions
+              a(class='btn-link', href='/admin/edit-product') Edit
+              form(action="/", method='POST')
+                button(href='/', type='submit') Delete
+      else
+        h1 No books yet
