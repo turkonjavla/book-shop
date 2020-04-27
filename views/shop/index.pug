@@ -18,7 +18,8 @@ block content
               p.product__description #{product.description}
             .card__actions
               a(href=`/products/` + product.id, class='btn-link') Details
-              form(action="/add-to-cart", method='GET')
+              form(action="/cart", method='POST')
                 button Add to cart
+                input(type="hidden", name='productId', value=product.id)
       else
         h1 No books yet
