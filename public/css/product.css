@@ -20,3 +20,25 @@
   text-align: center;
   font-size: 1.2rem;
 }
+
+.product__detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  max-width: 80rem;
+  grid-gap: 5rem;
+}
+
+.product__detail--title {
+  font-size: 2rem;
+}
+
+.product__detail--description {
+  font-size: 1.6rem;
+  padding: 2rem 0;
+}
+
+.product__detail--image {
+  width: 100%;
+  padding-bottom: 56.25%;
+}

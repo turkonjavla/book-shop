@@ -17,6 +17,8 @@ block content
               h2.product__price $#{product.price}
               p.product__description #{product.description}
             .card__actions
-              button Add to cart
+              a(href=`/products/` + product.id, class='btn-link') Details
+              form(action="/add-to-cart", method='GET')
+                button Add to cart
       else
         h1 No books yet
