@@ -77,32 +77,34 @@ main {
 }
 
 .card__content {
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 1rem;
+  display: grid;
 }
 
 .card__image {
   width: 100%;
+  height: 40rem;
 }
 
 .card__actions {
+  place-items: center end;
   text-align: center;
 }
 
-.btn {
-  border: 1px solid #00695c;
-  color: #00695c;
-  background: white;
-  border-radius: 3px;
-  cursor: pointer;
+.card-details {
+  place-items: center center;
 }
 
-.btn:hover,
-.btn:active {
-  background-color: #00695c;
-  color: white;
+a {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.7);
+  place-self: center center;
 }
 
-button {
+button,
+.btn-link {
+  display: inline-block;
+  margin-top: 1rem;
   font-size: 1.4rem;
   padding: 1rem;
   cursor: pointer;
@@ -111,8 +113,14 @@ button {
   border: none;
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s ease;
+  width: 100%;
 }
 
-button:hover {
+button:not(:last-child) {
+  margin-right: 2rem;
+}
+
+button:hover,
+a:hover {
   background-color: #ffc107;
 }
