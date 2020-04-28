@@ -2,4 +2,9 @@ extends ../layouts/main-layout.pug
   
 block content
   main
-    h2 Cart page
+    if products.length > 0
+      ul
+       each p in products
+        li= p.productData.title + ` (${p.qty})`
+    else
+      h2 No products in cart
