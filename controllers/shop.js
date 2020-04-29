@@ -56,12 +56,20 @@ exports.getCart = (req, res) => {
   });
 };
 
-exports.postCart = (req, res, next) => {
+exports.postCart = (req, res) => {
   const prodId = req.body.productId;
   Product.findById(prodId, product => {
     Cart.addProduct(prodId, product.price);
   });
   res.redirect('/cart');
+};
+
+exports.postRemoveProductFromCart = (req, res) => {
+  const productId = req.body.productId;
+  Product.findById(productId, product => {
+    Cart.deleteProduct(productId, product.price);
+    res.redirect('/cart');
+  });
 };
 
 exports.getCheckout = (req, res) => {
