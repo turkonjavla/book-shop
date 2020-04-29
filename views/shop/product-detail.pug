@@ -1,5 +1,14 @@
-extends ../views/main-layout.pug
+extends ../layouts/main-layout.pug
 
 block content
-  main
-    h1 Hello product details page
+  main.centered
+    .product__detail
+      img.product__detail--image(src=`${product.imageUrl}`, alt=`${product.title}`)
+
+      div
+        h1.product__detail--title #{product.title}
+
+        p.product__detail--description #{product.description}
+        form(action="/cart", method='POST')
+          button Add to cart
+          input(type="hidden", name='productId', value=product.id)
