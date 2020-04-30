@@ -18,10 +18,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
 
-db.execute('SELECT * FROM products')
-  .then(res => console.log(res[0]))
-  .catch(err => console.log('Error in app.js', err));
-
 // Routes
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
