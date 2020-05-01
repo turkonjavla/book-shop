@@ -17,7 +17,9 @@ exports.postAddProduct = (req, res) => {
     imageUrl,
     description,
   })
-    .then(() => res.redirect('/admin/products'))
+    .then(() => {
+      console.log('Book added!');
+    })
     .catch(err => console.error(err));
 };
 
@@ -62,7 +64,7 @@ exports.postEditProduct = (req, res) => {
       return product.save();
     })
     .then(() => {
-      res.redirect('/admin/products');
+      res.redirect('/');
     })
     .catch(err => console.error(err));
 };
@@ -80,12 +82,7 @@ exports.getProducts = (req, res) => {
 };
 
 exports.postDeleteProduct = (req, res, next) => {
-  const productId = req.body.productId;
-  Product.findByPk(productId)
-    .then(product => {
-      return product.destroy();
-    })
-    .then(() => res.redirect('/admin/products'))
-    .catch(err => console.error(err));
+  const prodId = req.body.productId;
+  Product.deleteById(prodId);
   res.redirect('/admin/products');
 };
