@@ -11,12 +11,14 @@ exports.getAddProduct = (req, res) => {
 exports.postAddProduct = (req, res) => {
   const { title, imageUrl, description, price } = req.body;
 
-  Product.create({
-    title,
-    price,
-    imageUrl,
-    description,
-  })
+  req.user
+    .createProduct({
+      // magic method created by sequelize when having an association
+      title,
+      price,
+      imageUrl,
+      description,
+    })
     .then(() => res.redirect('/admin/products'))
     .catch(err => console.error(err));
 };
