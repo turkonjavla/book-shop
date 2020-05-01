@@ -17,7 +17,7 @@ exports.postAddProduct = (req, res) => {
     imageUrl,
     description,
   })
-    .then(result => {
+    .then(() => {
       console.log('Book added!');
     })
     .catch(err => console.error(err));
@@ -31,35 +31,42 @@ exports.getEditProduct = (req, res) => {
     return res.redirect('/');
   }
 
-  Product.findById(productId, product => {
-    if (!product) {
-      return res.redirect('/');
-    }
+  Product.findByPk(productId)
+    .then(product => {
+      if (!product) {
+        return res.redirect('/');
+      }
 
-    res.render('admin/edit-product', {
-      pageTitle: 'Edit product',
-      path: '/admin/edit-product',
-      editing: editMode,
-      product,
-    });
-  });
+      res.render('admin/edit-product', {
+        pageTitle: 'Edit product',
+        path: '/admin/edit-product',
+        editing: editMode,
+        product,
+      });
+    })
+    .catch(err => console.error(err));
 };
 
 exports.postEditProduct = (req, res) => {
-  const prodId = req.body.productId;
+  const productId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  const updatedProduct = new Product(
-    prodId,
-    updatedTitle,
-    updatedImageUrl,
-    updatedDesc,
-    updatedPrice
-  );
-  updatedProduct.save();
-  res.redirect('/admin/products');
+
+  Product.findByPk(productId)
+    .then(product => {
+      product.title = updatedTitle;
+      product.price = updatedPrice;
+      product.imageUrl = updatedImageUrl;
+      product.description = updatedDesc;
+
+      return product.save();
+    })
+    .then(() => {
+      res.redirect('/');
+    })
+    .catch(err => console.error(err));
 };
 
 exports.getProducts = (req, res) => {
