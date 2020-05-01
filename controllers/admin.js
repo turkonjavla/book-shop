@@ -17,9 +17,7 @@ exports.postAddProduct = (req, res) => {
     imageUrl,
     description,
   })
-    .then(() => {
-      console.log('Book added!');
-    })
+    .then(() => res.redirect('/admin/products'))
     .catch(err => console.error(err));
 };
 
@@ -64,7 +62,7 @@ exports.postEditProduct = (req, res) => {
       return product.save();
     })
     .then(() => {
-      res.redirect('/');
+      res.redirect('/admin/products');
     })
     .catch(err => console.error(err));
 };
