@@ -40,35 +40,58 @@ exports.getProductById = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-  Cart.getCart(cart => {
-    Product.fetchAll(products => {
-      const cartProducts = [];
-
-      for (product of products) {
-        const cartProductData = cart.products.find(p => p.id === product.id);
-
-        if (cartProductData) {
-          cartProducts.push({
-            productData: product,
-            qty: cartProductData.qty,
+  req.user
+    .getCart()
+    .then(cart => {
+      return cart
+        .getProducts()
+        .then(products => {
+          res.render('shop/cart', {
+            path: '/cart',
+            pageTitle: 'Your cart',
+            products,
           });
-        }
-      }
-      res.render('shop/cart', {
-        path: '/cart',
-        pageTitle: 'Your cart',
-        products: cartProducts,
-      });
-    });
-  });
+        })
+        .catch(err => console.log(err));
+    })
+    .catch(err => console.error(err));
 };
 
 exports.postCart = (req, res) => {
-  const prodId = req.body.productId;
-  Product.findById(prodId, product => {
-    Cart.addProduct(prodId, product.price);
-  });
-  res.redirect('/cart');
+  const productId = req.body.productId;
+  let fetchedCart;
+  let newQuantity = 1;
+
+  req.user
+    .getCart()
+    .then(cart => {
+      fetchedCart = cart;
+      return cart.getProducts({ where: { id: productId } }); // return an array of products (which is going to be 1)
+    })
+    .then(products => {
+      let product;
+
+      if (products.length > 0) {
+        product = products[0]; // gets one product returned from previous .then()
+      }
+
+      // increase quantity
+      if (product) {
+        const oldQuantity = product.cartItem.quantity;
+        newQuantity = oldQuantity + 1;
+        return product;
+      }
+
+      // add new product to cart
+      return Product.findByPk(productId);
+    })
+    .then(product => {
+      return fetchedCart.addProduct(product, {
+        through: { quantity: newQuantity },
+      });
+    })
+    .then(() => res.redirect('/cart'))
+    .catch(err => console.error(err));
 };
 
 exports.postRemoveProductFromCart = (req, res) => {
