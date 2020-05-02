@@ -31,8 +31,11 @@ exports.getEditProduct = (req, res) => {
     return res.redirect('/');
   }
 
-  Product.findByPk(productId)
-    .then(product => {
+  req.user
+    .getProducts({ where: { id: productId } })
+    .then(products => {
+      const product = products[0];
+
       if (!product) {
         return res.redirect('/');
       }
@@ -70,7 +73,8 @@ exports.postEditProduct = (req, res) => {
 };
 
 exports.getProducts = (req, res) => {
-  Product.findAll()
+  req.user
+    .getProducts()
     .then(products => {
       res.render('admin/admin-product-list', {
         prods: products,
