@@ -54,5 +54,5 @@ sequelize
     return user;
   })
   /* .then(user => user.createCart()) */
-  .then(cart => app.listen(3000, () => console.log('Server is running')))
+  .then(() => app.listen(3000, () => console.log('Server is running')))
   .catch(err => console.error(err));
