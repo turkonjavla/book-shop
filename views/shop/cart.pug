@@ -19,7 +19,9 @@ block content
               td #{p.title}
               td #{p.cartItem.quantity}
               td
-                button(class='cart-btn', type='submit') Remove from cart
+                form(action="/cart-delete-item", method='POST')
+                  input(type="hidden", name='productId', value=p.id)
+                  button(class='cart-btn', type='submit') Remove from cart
 
     else
       h2 No products in cart
