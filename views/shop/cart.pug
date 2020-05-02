@@ -22,6 +22,8 @@ block content
                 form(action="/cart-delete-item", method='POST')
                   input(type="hidden", name='productId', value=p.id)
                   button(class='cart-btn', type='submit') Remove from cart
+      form(action='/create-order', method='POST')
+        button(type='submit') Place Order
 
     else
       h2 No products in cart
