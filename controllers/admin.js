@@ -80,10 +80,7 @@ exports.postEditProduct = (req, res) => {
   });
 };
 
-/* 
-exports.postDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  Product.deleteById(prodId);
-  res.redirect('/admin/products');
+exports.postDeleteProduct = (req, res) => {
+  const productId = req.body.productId;
+  Product.deleteById(productId).then(() => res.redirect('/'));
 };
- */

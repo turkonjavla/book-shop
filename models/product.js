@@ -57,6 +57,18 @@ class Product {
       })
       .catch(err => console.error(chalk.brightRed(err.message)));
   }
+
+  static deleteById(productId) {
+    const db = getDb();
+
+    return db
+      .collection('products')
+      .deleteOne({
+        _id: new mongodb.ObjectId(productId),
+      })
+      .then(() => console.log(chalk.greenBright('Book removed')))
+      .catch(err => console.error(chalk.redBright(err.message)));
+  }
 }
 
 module.exports = Product;
