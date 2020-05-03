@@ -1,27 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+const chalk = require('chalk');
 
 const { getDb } = require('../utils/database');
-
-const Cart = require('./cart');
-
-const products = [];
-
-const rootDir = path.join(
-  path.dirname(process.mainModule.filename),
-  'data',
-  'products.json'
-);
-
-const getProductsFromFile = cb => {
-  fs.readFile(rootDir, (err, fileContent) => {
-    if (err) {
-      return cb([]);
-    }
-    return cb(JSON.parse(fileContent));
-  });
-  return products;
-};
 
 class Product {
   constructor(title, imageUrl, description, price) {
@@ -40,6 +19,19 @@ class Product {
         console.log(chalk.yellow(result));
       })
       .catch(err => console.error(chalk.brightRed(err.message)));
+  }
+
+  static fetchAll() {
+    const db = getDb();
+    return db
+      .collection('products')
+      .find()
+      .toArray()
+      .then(products => {
+        console.log(products);
+        return products;
+      })
+      .catch(err => console.error(chalk.redBright(err.message)));
   }
 }
 
