@@ -17,10 +17,9 @@ exports.postAddProduct = (req, res) => {
   product
     .save()
     .then(() => {
-      res.rdirect('/');
+      res.redirect('/');
     })
     .catch(err => console.error(chalk.redBright(err.message)));
-  res.redirect('/');
 };
 
 exports.getProducts = (req, res) => {
@@ -35,45 +34,53 @@ exports.getProducts = (req, res) => {
     .catch(err => console.error(chalk.redBright(err.message)));
 };
 
-/* exports.getEditProduct = (req, res) => {
+exports.getEditProduct = (req, res) => {
   const editMode = req.query.edit;
   const productId = req.params.productId;
 
   if (!editMode) {
     return res.redirect('/');
   }
+  Product.findById(productId)
+    .then(product => {
+      if (!product) {
+        return res.redirect('/');
+      }
 
-  Product.findById(productId, product => {
-    if (!product) {
-      return res.redirect('/');
-    }
+      console.log(product);
 
-    res.render('admin/edit-product', {
-      pageTitle: 'Edit product',
-      path: '/admin/edit-product',
-      editing: editMode,
-      product,
-    });
-  });
+      res.render('admin/edit-product', {
+        pageTitle: 'Edit product',
+        path: '/admin/edit-product',
+        editing: editMode,
+        product,
+      });
+    })
+    .catch(err => console.error(calk.redBright(err.message)));
 };
 
 exports.postEditProduct = (req, res) => {
-  const prodId = req.body.productId;
+  const productId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  const updatedProduct = new Product(
-    prodId,
+
+  const product = new Product(
+    productId,
     updatedTitle,
     updatedImageUrl,
     updatedDesc,
     updatedPrice
   );
-  updatedProduct.save();
-  res.redirect('/admin/products');
+
+  product.save().then(result => {
+    console.log(result);
+    res.redirect('/admin/products');
+  });
 };
 
+/* 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   Product.deleteById(prodId);
