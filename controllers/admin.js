@@ -11,12 +11,17 @@ exports.getAddProduct = (req, res) => {
 exports.postAddProduct = (req, res) => {
   const { title, imageUrl, description, price } = req.body;
 
-  const product = new Product(null, title, imageUrl, description, price);
-  product.save();
+  const product = new Product(title, imageUrl, description, price);
+  product
+    .save()
+    .then(() => {
+      res.rdirect('/');
+    })
+    .catch(err => console.error(chalk.brightRed(err.message)));
   res.redirect('/');
 };
 
-exports.getEditProduct = (req, res) => {
+/* exports.getEditProduct = (req, res) => {
   const editMode = req.query.edit;
   const productId = req.params.productId;
 
@@ -70,3 +75,4 @@ exports.postDeleteProduct = (req, res, next) => {
   Product.deleteById(prodId);
   res.redirect('/admin/products');
 };
+ */

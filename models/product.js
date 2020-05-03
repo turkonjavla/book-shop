@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { getDb } = require('../utils/database');
+
 const Cart = require('./cart');
 
 const products = [];
@@ -21,9 +23,8 @@ const getProductsFromFile = cb => {
   return products;
 };
 
-module.exports = class Product {
-  constructor(id, title, imageUrl, description, price) {
-    this.id = id;
+class Product {
+  constructor(title, imageUrl, description, price) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -31,45 +32,15 @@ module.exports = class Product {
   }
 
   save() {
-    getProductsFromFile(products => {
-      if (this.id) {
-        const existingProductIndex = products.findIndex(p => p.id === this.id);
-        const updatedProducts = [...products];
-
-        updatedProducts[existingProductIndex] = this;
-        fs.writeFile(rootDir, JSON.stringify(updatedProducts), err =>
-          console.log(err)
-        );
-      } else {
-        this.id = Math.random().toString();
-        products.push(this);
-        fs.writeFile(rootDir, JSON.stringify(products), err =>
-          console.log(err)
-        );
-      }
-    });
+    const db = getDb();
+    return db
+      .collection('products')
+      .insertOne(this)
+      .then(result => {
+        console.log(chalk.yellow(result));
+      })
+      .catch(err => console.error(chalk.brightRed(err.message)));
   }
+}
 
-  static deleteById(id) {
-    getProductsFromFile(products => {
-      const product = products.find(p => p.id === id);
-      const updatedProducts = products.filter(p => p.id !== id);
-      fs.writeFile(rootDir, JSON.stringify(updatedProducts), err => {
-        if (!err) {
-          Cart.deleteProduct(id, product.price);
-        }
-      });
-    });
-  }
-
-  static fetchAll(cb) {
-    getProductsFromFile(cb);
-  }
-
-  static findById(id, cb) {
-    getProductsFromFile(products => {
-      const product = products.find(p => p.id === id);
-      cb(product);
-    });
-  }
-};
+module.exports = Product;
