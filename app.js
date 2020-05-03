@@ -2,7 +2,7 @@ const express = require('express');
 const chalk = require('chalk');
 
 const { HTTP_PORT, HOST } = require('./keys');
-const mongoConnection = require('./utils/database');
+const { mongoConnect } = require('./utils/database');
 
 const app = express();
 const Middleware = require('./middleware');
@@ -18,7 +18,7 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
-mongoConnection(() => {
+mongoConnect(() => {
   app.listen(HTTP_PORT, () => {
     console.log(
       chalk.blueBright(`Server is running on http://${HOST}:${HTTP_PORT}`)

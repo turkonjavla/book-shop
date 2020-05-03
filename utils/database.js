@@ -3,14 +3,29 @@ const chalk = require('chalk');
 
 const MongoClient = require('mongodb').MongoClient;
 
-const mongoConnection = callback =>
+let _db;
+
+const mongoConnect = callback => {
   MongoClient.connect(MONGO_URI, { useUnifiedTopology: true })
-    .then(result => {
+    .then(client => {
       console.log(
         chalk.greenBright('> Successfully connected to the database')
       );
-      callback(result);
+      _db = client.db();
+      callback();
     })
-    .catch(err => comsole.error(chalk.redBright(err.message)));
+    .catch(err => {
+      console.error(chalk.redBright.bold(err.message));
+      throw err;
+    });
+};
 
-module.exports = mongoConnection;
+const getDb = () => {
+  if (_db) {
+    return _db;
+  }
+  throw 'No database found';
+};
+
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
