@@ -23,6 +23,18 @@ exports.postAddProduct = (req, res) => {
   res.redirect('/');
 };
 
+exports.getProducts = (req, res) => {
+  Product.fetchAll()
+    .then(products => {
+      res.render('admin/admin-product-list', {
+        prods: products,
+        pageTitle: 'Admin Products',
+        path: '/admin/products',
+      });
+    })
+    .catch(err => console.error(chalk.redBright(err.message)));
+};
+
 /* exports.getEditProduct = (req, res) => {
   const editMode = req.query.edit;
   const productId = req.params.productId;
@@ -60,16 +72,6 @@ exports.postEditProduct = (req, res) => {
   );
   updatedProduct.save();
   res.redirect('/admin/products');
-};
-
-exports.getProducts = (req, res) => {
-  Product.fetchAll(products => {
-    res.render('admin/admin-product-list', {
-      prods: products,
-      pageTitle: 'Admin Products',
-      path: '/admin/products',
-    });
-  });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
