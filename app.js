@@ -1,12 +1,13 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
+const chalk = require('chalk');
+
+const { HTTP_PORT, HOST } = require('./keys');
+const mongoConnection = require('./utils/database');
 
 const app = express();
+const Middleware = require('./middleware');
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'pug');
+Middleware(app);
 
 // Routes
 const adminRoutes = require('./routes/admin');
@@ -17,6 +18,10 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
-app.listen(3000, () => {
-  console.log('Server is running');
+mongoConnection(() => {
+  app.listen(HTTP_PORT, () => {
+    console.log(
+      chalk.blueBright(`Server is running on http://${HOST}:${HTTP_PORT}`)
+    );
+  });
 });
