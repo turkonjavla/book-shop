@@ -1,3 +1,5 @@
+const chalk = require('chalk');
+
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res) => {
@@ -17,7 +19,7 @@ exports.postAddProduct = (req, res) => {
     .then(() => {
       res.rdirect('/');
     })
-    .catch(err => console.error(chalk.brightRed(err.message)));
+    .catch(err => console.error(chalk.redBright(err.message)));
   res.redirect('/');
 };
 
