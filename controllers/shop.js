@@ -75,3 +75,10 @@ exports.getCheckout = (req, res) => {
 exports.getOrders = (req, res) => {
   res.render('shop/orders', { path: '/orders', pageTitle: 'Orders' });
 };
+
+exports.postOrder = (req, res, next) => {
+  req.user
+    .addOrder()
+    .then(() => res.redirect('/orders'))
+    .catch(err => console.error(err.message));
+};
