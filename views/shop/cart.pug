@@ -9,9 +9,9 @@ block content
       ul
         each p in products
           li
-            p.product__title= p.productData.title + ` (${p.qty})`
+            p.product__title= p.title + ` (${p.quantity})`
             form(action="/cart-delete-item", method='POST')
-              input(type="hidden", name='productId', value=p.productData.id)
+              input(type="hidden", name='productId', value=p._id)
               button(class='btn-link', type='submit') Remove from cart
     else
       h2 No products in cart
