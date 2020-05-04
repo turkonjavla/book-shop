@@ -61,11 +61,16 @@ exports.getCart = (req, res) => {
 };
 
 exports.postCart = (req, res) => {
-  const prodId = req.body.productId;
-  Product.findById(prodId, product => {
-    Cart.addProduct(prodId, product.price);
-  });
-  res.redirect('/cart');
+  const productId = req.body.productId;
+
+  Product.findById(productId)
+    .then(product => {
+      return req.user.addToCart(product);
+    })
+    .then(result => {
+      console.log(result);
+    })
+    .catch(err => console.error(err));
 };
 
 exports.postRemoveProductFromCart = (req, res) => {

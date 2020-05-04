@@ -13,7 +13,7 @@ Middleware(app);
 app.use((req, res, next) => {
   User.findById('5eaf2578da4ab84bee6b0dbe')
     .then(user => {
-      req.user = user;
+      req.user = new User(user.name, user.email, user.cart, user._id);
       next();
     })
     .catch(err => console.error(chalk.redBright(err.message)));
