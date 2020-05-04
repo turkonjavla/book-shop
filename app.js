@@ -3,11 +3,21 @@ const chalk = require('chalk');
 
 const { HTTP_PORT, HOST } = require('./keys');
 const { mongoConnect } = require('./utils/database');
+const User = require('./models/user');
 
 const app = express();
 const Middleware = require('./middleware');
 
 Middleware(app);
+
+app.use((req, res, next) => {
+  User.findById('5eaf2578da4ab84bee6b0dbe')
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => console.error(chalk.redBright(err.message)));
+});
 
 // Routes
 const adminRoutes = require('./routes/admin');
