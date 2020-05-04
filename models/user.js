@@ -98,6 +98,14 @@ class User {
       });
   }
 
+  getOrders() {
+    const db = getDb();
+    return db
+      .collection('orders')
+      .find({ 'user._id': new ObjectId(this._id) })
+      .toArray();
+  }
+
   save() {
     const db = getDb();
     db.collection('users').insertOne(this);
