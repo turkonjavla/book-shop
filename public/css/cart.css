@@ -1,11 +1,30 @@
 .cart {
   width: 40rem;
 }
-
 ul li {
   list-style: none;
 }
-
 p {
   margin-top: 4rem;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table:not(:first-child) {
+  margin-top: 2rem;
+}
+
+table tr td,
+table th {
+  padding: 1rem;
+  width: 20rem;
+  text-align: center;
+  font-size: 1.6rem;
+}
+
+.cart-btn {
+  margin-top: 0;
+  width: 15rem;
 }
