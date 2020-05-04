@@ -6,12 +6,22 @@ block styles
 block content
   main.centered
     if products.length > 0
-      ul
-        each p in products
-          li
-            p.product__title= p.productData.title + ` (${p.qty})`
-            form(action="/cart-delete-item", method='POST')
-              input(type="hidden", name='productId', value=p.productData.id)
-              button(class='btn-link', type='submit') Remove from cart
+      table(style='width:100%', border='1')
+        thead
+          tr
+            th Items
+            th Quantity
+            th Actions
+        tbody
+          each p in products
+            tr
+              td #{p.title}
+              td #{p.quantity}
+              td
+                form(action="/cart-delete-item", method='POST')
+                  input(type="hidden", name='productId', value=p._id)
+                  button(class='cart-btn', type='submit') Remove from cart
+      form(action='/create-order', method='POST')
+        button(type='submit') Place Order
     else
       h2 No products in cart

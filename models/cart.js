@@ -68,7 +68,7 @@ module.exports = class Cart {
   }
 
   static getCart(cb) {
-    fs.readFile(rootDir, (err, fileContent) => {
+    /*     fs.readFile(rootDir, (err, fileContent) => {
       const cart = JSON.parse(fileContent);
 
       if (err) {
@@ -76,6 +76,6 @@ module.exports = class Cart {
       } else {
         cb(cart);
       }
-    });
+    }); */
   }
 };
