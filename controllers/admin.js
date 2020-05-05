@@ -12,22 +12,13 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = async (req, res) => {
   const product = new Product({ ...req.body });
-  try {
-    await product.save();
-    res.redirect();
-  } catch (error) {
-    console.error(err =>
-      console.error(
-        chalk.redBright('Error when adding a product: ', err.message)
-      )
-    );
-  }
-  /*   product
+
+  product
     .save()
     .then(() => {
       res.redirect('/');
     })
-    .catch(err => console.error(chalk.redBright(err.message))); */
+    .catch(err => console.error(chalk.redBright(err.message)));
 };
 
 exports.getProducts = (req, res) => {
