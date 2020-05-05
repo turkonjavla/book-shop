@@ -18,7 +18,10 @@ exports.postAddProduct = async (req, res) => {
     .then(() => {
       res.redirect('/');
     })
-    .catch(err => console.error(chalk.redBright(err.message)));
+    .catch(err => {
+      console.error(chalk.redBright(err.message));
+      res.redirect('/admin/add-product');
+    });
 };
 
 exports.getProducts = (req, res) => {
@@ -81,5 +84,7 @@ exports.postEditProduct = (req, res) => {
 
 exports.postDeleteProduct = (req, res) => {
   const productId = req.body.productId;
-  Product.deleteById(productId).then(() => res.redirect('/admin/products'));
+  Product.findByIdAndDelete(productId).then(() =>
+    res.redirect('/admin/products')
+  );
 };
