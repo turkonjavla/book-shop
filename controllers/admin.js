@@ -22,7 +22,7 @@ exports.postAddProduct = async (req, res) => {
 };
 
 exports.getProducts = (req, res) => {
-  Product.fetchAll()
+  Product.find()
     .then(products => {
       res.render('admin/admin-product-list', {
         prods: products,
