@@ -46,8 +46,6 @@ exports.getEditProduct = (req, res) => {
         return res.redirect('/');
       }
 
-      console.log(product);
-
       res.render('admin/edit-product', {
         pageTitle: 'Edit product',
         path: '/admin/edit-product',
@@ -59,24 +57,26 @@ exports.getEditProduct = (req, res) => {
 };
 
 exports.postEditProduct = (req, res) => {
-  const productId = req.body.productId;
-  const updatedTitle = req.body.title;
-  const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
-  const updatedDesc = req.body.description;
+  const { productId, title, price, imageUrl, description } = req.body;
 
-  const product = new Product(
-    productId,
-    updatedTitle,
-    updatedImageUrl,
-    updatedDesc,
-    updatedPrice
-  );
-
-  product.save().then(result => {
-    console.log(result);
-    res.redirect('/admin/products');
-  });
+  Product.findOneAndUpdate(
+    { _id: productId },
+    {
+      $set: {
+        title,
+        imageUrl,
+        price,
+        description,
+      },
+    },
+    { new: true }
+  )
+    .then(() => res.redirect('/admin/products'))
+    .catch(err =>
+      console.error(
+        chalk.redBright('Error when updating product: ', err.message)
+      )
+    );
 };
 
 exports.postDeleteProduct = (req, res) => {
