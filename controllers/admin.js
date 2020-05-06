@@ -11,7 +11,8 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = async (req, res) => {
-  const product = new Product({ ...req.body });
+  const userId = req.user._id;
+  const product = new Product({ ...req.body, userId });
 
   product
     .save()
