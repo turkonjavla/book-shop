@@ -1,4 +1,7 @@
+const chalk = require('chalk');
+
 const Product = require('../models/product');
+const Order = require('../models/order');
 
 exports.getIndex = (req, res) => {
   Product.find().then(products => {
@@ -56,7 +59,6 @@ exports.postCart = (req, res) => {
       return req.user.addToCart(product);
     })
     .then(result => {
-      console.log(result);
       res.redirect('/cart');
     })
     .catch(err => console.error(err));
@@ -75,7 +77,7 @@ exports.getCheckout = (req, res) => {
 };
 
 exports.getOrders = (req, res) => {
-  req.user.getOrders().then(orders => {
+  Order.find({ 'user.userId': req.user._id }).then(orders => {
     res.render('shop/orders', {
       path: '/orders',
       pageTitle: 'Orders',
@@ -86,7 +88,32 @@ exports.getOrders = (req, res) => {
 
 exports.postOrder = (req, res, next) => {
   req.user
-    .addOrder()
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      const products = user.cart.items.map(i => {
+        return {
+          quantity: i.quantity,
+          product: { ...i.productId._doc }, // gives access to all the data when using _doc
+        };
+      });
+
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user, // mongoose will automatically pick the id
+        },
+        products,
+      });
+      return order.save();
+    })
+    .then(() => {
+      req.user.clearCart();
+    })
     .then(() => res.redirect('/orders'))
-    .catch(err => console.error(err.message));
+    .catch(err =>
+      console.error(
+        chalk.redBright('Error wehn creating an order. ', err.message)
+      )
+    );
 };
