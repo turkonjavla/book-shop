@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 
 exports.getIndex = (req, res) => {
   Product.find().then(products => {
