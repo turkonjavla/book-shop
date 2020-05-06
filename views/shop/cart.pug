@@ -15,11 +15,11 @@ block content
         tbody
           each p in products
             tr
-              td #{p.title}
+              td #{p.productId.title}
               td #{p.quantity}
               td
                 form(action="/cart-delete-item", method='POST')
-                  input(type="hidden", name='productId', value=p._id)
+                  input(type="hidden", name='productId', value=p.productId._id)
                   button(class='cart-btn', type='submit') Remove from cart
       form(action='/create-order', method='POST')
         button(type='submit') Place Order

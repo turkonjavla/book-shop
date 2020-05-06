@@ -37,13 +37,16 @@ exports.getProductDetails = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-  req.user.getCart().then(products => {
-    res.render('shop/cart', {
-      path: '/cart',
-      pageTitle: 'Your Cart',
-      products: products,
+  req.user
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: user.cart.items,
+      });
     });
-  });
 };
 
 exports.postCart = (req, res) => {
@@ -63,7 +66,7 @@ exports.postCart = (req, res) => {
 exports.postRemoveProductFromCart = (req, res) => {
   const productId = req.body.productId;
   req.user
-    .deleteItemFromCart(productId)
+    .removeFromCart(productId)
     .then(() => res.redirect('/cart'))
     .catch(err => console.error(err.message));
 };
