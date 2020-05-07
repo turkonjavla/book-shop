@@ -7,6 +7,7 @@ exports.getAddProduct = (req, res) => {
     pageTitle: 'Add product',
     path: '/admin/add-product',
     editing: false,
+    isAuthenticated: req.isLoggedIn,
   });
 };
 
@@ -32,6 +33,7 @@ exports.getProducts = (req, res) => {
         prods: products,
         pageTitle: 'Admin Products',
         path: '/admin/products',
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch(err => console.error(chalk.redBright(err.message)));
@@ -55,6 +57,7 @@ exports.getEditProduct = (req, res) => {
         path: '/admin/edit-product',
         editing: editMode,
         product,
+        isAuthenticated: req.isLoggedIn,
       });
     })
     .catch(err => console.error(calk.redBright(err.message)));
