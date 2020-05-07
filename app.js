@@ -1,22 +1,20 @@
 const express = require('express');
 const chalk = require('chalk');
 
-const { HTTP_PORT, HOST } = require('./keys');
-const { mongoConnect } = require('./utils/database');
 const User = require('./models/user');
+
+const { HTTP_PORT, HOST } = require('./keys');
 
 const app = express();
 const Middleware = require('./middleware');
 
 Middleware(app);
 
-app.use((req, res, next) => {
-  User.findById('5eaf2578da4ab84bee6b0dbe')
-    .then(user => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
-      next();
-    })
-    .catch(err => console.error(chalk.redBright(err.message)));
+app.use('/', (req, res, next) => {
+  User.findById('5eb1abdc23d56531c2653a60').then(user => {
+    req.user = user;
+    next();
+  });
 });
 
 // Routes
@@ -28,10 +26,8 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  app.listen(HTTP_PORT, () => {
-    console.log(
-      chalk.blueBright(`Server is running on http://${HOST}:${HTTP_PORT}`)
-    );
-  });
+app.listen(HTTP_PORT, () => {
+  console.log(
+    chalk.blueBright(`Server is running on http://${HOST}:${HTTP_PORT}`)
+  );
 });

@@ -1,8 +1,10 @@
+const chalk = require('chalk');
+
 const Product = require('../models/product');
-const Cart = require('../models/cart');
+const Order = require('../models/order');
 
 exports.getIndex = (req, res) => {
-  Product.fetchAll().then(products => {
+  Product.find().then(products => {
     res.render('shop/index', {
       prods: products,
       pageTitle: 'Shop',
@@ -12,7 +14,7 @@ exports.getIndex = (req, res) => {
 };
 
 exports.getProducts = (req, res) => {
-  Product.fetchAll()
+  Product.find()
     .then(products => {
       res.render('shop/product-list', {
         prods: products,
@@ -37,13 +39,16 @@ exports.getProductDetails = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-  req.user.getCart().then(products => {
-    res.render('shop/cart', {
-      path: '/cart',
-      pageTitle: 'Your Cart',
-      products: products,
+  req.user
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: user.cart.items,
+      });
     });
-  });
 };
 
 exports.postCart = (req, res) => {
@@ -54,7 +59,6 @@ exports.postCart = (req, res) => {
       return req.user.addToCart(product);
     })
     .then(result => {
-      console.log(result);
       res.redirect('/cart');
     })
     .catch(err => console.error(err));
@@ -63,7 +67,7 @@ exports.postCart = (req, res) => {
 exports.postRemoveProductFromCart = (req, res) => {
   const productId = req.body.productId;
   req.user
-    .deleteItemFromCart(productId)
+    .removeFromCart(productId)
     .then(() => res.redirect('/cart'))
     .catch(err => console.error(err.message));
 };
@@ -73,7 +77,7 @@ exports.getCheckout = (req, res) => {
 };
 
 exports.getOrders = (req, res) => {
-  req.user.getOrders().then(orders => {
+  Order.find({ 'user.userId': req.user._id }).then(orders => {
     res.render('shop/orders', {
       path: '/orders',
       pageTitle: 'Orders',
@@ -84,7 +88,32 @@ exports.getOrders = (req, res) => {
 
 exports.postOrder = (req, res, next) => {
   req.user
-    .addOrder()
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      const products = user.cart.items.map(i => {
+        return {
+          quantity: i.quantity,
+          product: { ...i.productId._doc }, // gives access to all the data when using _doc
+        };
+      });
+
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user, // mongoose will automatically pick the id
+        },
+        products,
+      });
+      return order.save();
+    })
+    .then(() => {
+      req.user.clearCart();
+    })
     .then(() => res.redirect('/orders'))
-    .catch(err => console.error(err.message));
+    .catch(err =>
+      console.error(
+        chalk.redBright('Error wehn creating an order. ', err.message)
+      )
+    );
 };
