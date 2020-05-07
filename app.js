@@ -10,13 +10,6 @@ const Middleware = require('./middleware');
 
 Middleware(app);
 
-app.use('/', (req, res, next) => {
-  User.findById('5eb1abdc23d56531c2653a60').then(user => {
-    req.user = user;
-    next();
-  });
-});
-
 // Routes
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
