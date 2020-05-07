@@ -10,27 +10,23 @@ exports.getAddProduct = (req, res) => {
   });
 };
 
-exports.postAddProduct = (req, res) => {
-  const { title, imageUrl, description, price } = req.body;
+exports.postAddProduct = async (req, res) => {
+  const userId = req.user._id;
+  const product = new Product({ ...req.body, userId });
 
-  const product = new Product(
-    title,
-    imageUrl,
-    description,
-    price,
-    null,
-    req.user._id
-  );
   product
     .save()
     .then(() => {
       res.redirect('/');
     })
-    .catch(err => console.error(chalk.redBright(err.message)));
+    .catch(err => {
+      console.error(chalk.redBright(err.message));
+      res.redirect('/admin/add-product');
+    });
 };
 
 exports.getProducts = (req, res) => {
-  Product.fetchAll()
+  Product.find()
     .then(products => {
       res.render('admin/admin-product-list', {
         prods: products,
@@ -54,8 +50,6 @@ exports.getEditProduct = (req, res) => {
         return res.redirect('/');
       }
 
-      console.log(product);
-
       res.render('admin/edit-product', {
         pageTitle: 'Edit product',
         path: '/admin/edit-product',
@@ -67,27 +61,31 @@ exports.getEditProduct = (req, res) => {
 };
 
 exports.postEditProduct = (req, res) => {
-  const productId = req.body.productId;
-  const updatedTitle = req.body.title;
-  const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
-  const updatedDesc = req.body.description;
+  const { productId, title, price, imageUrl, description } = req.body;
 
-  const product = new Product(
-    productId,
-    updatedTitle,
-    updatedImageUrl,
-    updatedDesc,
-    updatedPrice
-  );
-
-  product.save().then(result => {
-    console.log(result);
-    res.redirect('/admin/products');
-  });
+  Product.findOneAndUpdate(
+    { _id: productId },
+    {
+      $set: {
+        title,
+        imageUrl,
+        price,
+        description,
+      },
+    },
+    { new: true }
+  )
+    .then(() => res.redirect('/admin/products'))
+    .catch(err =>
+      console.error(
+        chalk.redBright('Error when updating product: ', err.message)
+      )
+    );
 };
 
 exports.postDeleteProduct = (req, res) => {
   const productId = req.body.productId;
-  Product.deleteById(productId).then(() => res.redirect('/admin/products'));
+  Product.findByIdAndDelete(productId).then(() =>
+    res.redirect('/admin/products')
+  );
 };
