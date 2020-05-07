@@ -12,7 +12,7 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = async (req, res) => {
-  const userId = req.session.user;
+  const userId = req.user;
   const product = new Product({ ...req.body, userId });
 
   product

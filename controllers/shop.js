@@ -42,7 +42,7 @@ exports.getProductDetails = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-  req.session.user
+  req.user
     .populate('cart.items.productId')
     .execPopulate()
     .then(user => {
@@ -60,9 +60,9 @@ exports.postCart = (req, res) => {
 
   Product.findById(productId)
     .then(product => {
-      return reqaddToCart(product);
+      return req.user.addToCart(product);
     })
-    .then(result => {
+    .then(() => {
       res.redirect('/cart');
     })
     .catch(err => console.error(err));
@@ -70,7 +70,7 @@ exports.postCart = (req, res) => {
 
 exports.postRemoveProductFromCart = (req, res) => {
   const productId = req.body.productId;
-  req.session.user
+  req.user
     .removeFromCart(productId)
     .then(() => res.redirect('/cart'))
     .catch(err => console.error(err.message));
@@ -81,7 +81,7 @@ exports.getCheckout = (req, res) => {
 };
 
 exports.getOrders = (req, res) => {
-  Order.find({ 'user.userId': req_id }).then(orders => {
+  Order.find({ 'user.userId': req.user._id }).then(orders => {
     res.render('shop/orders', {
       path: '/orders',
       pageTitle: 'Orders',
@@ -92,7 +92,7 @@ exports.getOrders = (req, res) => {
 };
 
 exports.postOrder = (req, res, next) => {
-  req.session.user
+  req.user
     .populate('cart.items.productId')
     .execPopulate()
     .then(user => {
@@ -105,7 +105,7 @@ exports.postOrder = (req, res, next) => {
 
       const order = new Order({
         user: {
-          name: reqname,
+          name: req.session.user.name,
           userId: req.session.user, // mongoose will automatically pick the id
         },
         products,
@@ -113,7 +113,7 @@ exports.postOrder = (req, res, next) => {
       return order.save();
     })
     .then(() => {
-      reqclearCart();
+      req.user.clearCart();
     })
     .then(() => res.redirect('/orders'))
     .catch(err =>

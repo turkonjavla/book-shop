@@ -8,6 +8,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 
 const { MONGO_URI } = require('../keys');
+const User = require('../models/user');
 
 const store = new MongoDBStore({
   uri: MONGO_URI,
@@ -29,6 +30,18 @@ const CommonMiddleware = app => {
       store,
     })
   );
+  app.use((req, res, next) => {
+    if (!req.session.user) {
+      return next();
+    }
+
+    User.findById(req.session.user._id)
+      .then(user => {
+        req.user = user;
+        next();
+      })
+      .catch(err => console.error(err.message));
+  });
 };
 
 const Middleware = app => {
