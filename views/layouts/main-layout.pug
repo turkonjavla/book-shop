@@ -33,5 +33,6 @@ html(lang="en")
             if (isAuthenticated)
               li.main-header__item
                 form(action='/logout', method='POST')
+                  input(type="hidden", value=csrfToken, name='_csrf')
                   button(type='submit') Logout
     block content

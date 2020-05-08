@@ -19,9 +19,11 @@ block content
               td #{p.quantity}
               td
                 form(action="/cart-delete-item", method='POST')
+                  input(type="hidden", value=csrfToken, name='_csrf')
                   input(type="hidden", name='productId', value=p.productId._id)
                   button(class='cart-btn', type='submit') Remove from cart
       form(action='/create-order', method='POST')
+        input(type="hidden", value=csrfToken, name='_csrf')
         button(type='submit') Place Order
     else
       h2 No products in cart

@@ -12,5 +12,6 @@ block content
 
         label(for="password") Password
         input(type="password", name="password")#password
+        input(type="hidden", value=csrfToken, name='_csrf')
 
       button(type="submit") Login

@@ -13,7 +13,8 @@ block content
             p.product__description #{product.description}
             if (isAuthenticated)
               form(action="/cart", method='POST')
-                button Add to cart
+                input(type="hidden", value=csrfToken, name='_csrf')
                 input(type="hidden", name='productId', value=product._id)
+                button Add to cart
       else
         h1 No books yet

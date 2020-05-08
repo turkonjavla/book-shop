@@ -19,6 +19,8 @@ block content
         label(for="description") Description
         textarea(name="description", rows='5', cols='40')#description #{value=`${editing ? product.description : ''}`}
 
+        input(type="hidden", value=csrfToken, name='_csrf')
+        
         if editing
           input(type="hidden", value=product._id, name='productId')
 

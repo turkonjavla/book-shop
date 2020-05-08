@@ -16,6 +16,9 @@ block content
               a(class='btn-link', href=`/admin/edit-product/${product._id}?edit=true`) Edit
               form(action="/admin/delete-product", method='POST')
                 input(type="hidden", name='productId', value=product._id)
+                input(type="hidden", value=csrfToken, name='_csrf')
+                
                 button(type='submit') Delete
+                
       else
         h1 No books yet

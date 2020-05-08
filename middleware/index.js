@@ -1,4 +1,5 @@
 const cors = require('cors');
+const csrf = require('csurf');
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
@@ -9,6 +10,8 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 
 const { MONGO_URI } = require('../keys');
 const User = require('../models/user');
+
+const csrfProtection = csrf();
 
 const store = new MongoDBStore({
   uri: MONGO_URI,
@@ -30,6 +33,7 @@ const CommonMiddleware = app => {
       store,
     })
   );
+  app.use(csrfProtection);
   app.use((req, res, next) => {
     if (!req.session.user) {
       return next();
@@ -41,6 +45,11 @@ const CommonMiddleware = app => {
         next();
       })
       .catch(err => console.error(err.message));
+  });
+  app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
   });
 };
 
