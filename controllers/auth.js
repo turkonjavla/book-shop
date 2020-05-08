@@ -45,19 +45,29 @@ exports.getLogin = (req, res) => {
   });
 };
 
-exports.postLogin = (req, res) => {
-  User.findById('5eb1abdc23d56531c2653a60').then(user => {
-    req.session.isLoggedIn = true;
-    req.session.user = user;
+exports.postLogin = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
 
-    req.session.save(err => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      res.redirect('/');
-    });
-  });
+    if (!user) {
+      return res.redirect('/login');
+    }
+
+    if ((await passwordHasher.check(password, user.password)) === true) {
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      req.session.save(err => {
+        if (!err) {
+          return res.redirect('/');
+        }
+      });
+    } else {
+      return res.redirect('/login');
+    }
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 
 exports.postLogout = (req, res) => {
