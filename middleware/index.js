@@ -1,5 +1,6 @@
 const cors = require('cors');
 const csrf = require('csurf');
+const flash = require('connect-flash');
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
@@ -34,6 +35,7 @@ const CommonMiddleware = app => {
     })
   );
   app.use(csrfProtection);
+  app.use(flash());
   app.use((req, res, next) => {
     if (!req.session.user) {
       return next();
