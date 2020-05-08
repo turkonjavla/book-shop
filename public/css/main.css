@@ -137,3 +137,9 @@ button:hover,
 a:hover {
   background-color: #ffc107;
 }
+
+.error {
+  color: #ef5350;
+  font-size: 1.6rem;
+  margin-top: 2rem;
+}

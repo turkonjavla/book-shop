@@ -9,6 +9,8 @@ block content
         h1.product__detail--title #{product.title}
 
         p.product__detail--description #{product.description}
-        form(action="/cart", method='POST')
-          button Add to cart
-          input(type="hidden", name='productId', value=product._id)
+        if (isAuthenticated)
+          form(action="/cart", method='POST')
+            input(type="hidden", value=csrfToken, name='_csrf')
+            input(type="hidden", name='productId', value=product._id)
+            button Add to cart

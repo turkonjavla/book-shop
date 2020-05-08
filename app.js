@@ -1,5 +1,6 @@
 const express = require('express');
 const chalk = require('chalk');
+const csrf = require('csurf');
 
 const User = require('./models/user');
 
@@ -10,20 +11,15 @@ const Middleware = require('./middleware');
 
 Middleware(app);
 
-app.use('/', (req, res, next) => {
-  User.findById('5eb1abdc23d56531c2653a60').then(user => {
-    req.user = user;
-    next();
-  });
-});
-
 // Routes
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 const errorController = require('./controllers/error');
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 app.use(errorController.get404);
 
 app.listen(HTTP_PORT, () => {

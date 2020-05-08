@@ -14,8 +14,10 @@ block content
               p.product__description #{product.description}
             .card__actions
               a(href=`/products/` + product._id, class='btn-link') Details
-              form(action="/cart", method='POST')
-                button Add to cart
-                input(type="hidden", name='productId', value=product._id)
+              if (isAuthenticated)
+                form(action="/cart", method='POST')
+                  input(type="hidden", value=csrfToken, name='_csrf')
+                  button Add to cart
+                  input(type="hidden", name='productId', value=product._id)
       else
         h1 No books yet
