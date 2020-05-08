@@ -1,0 +1,19 @@
+extends ../layouts/main-layout.pug
+
+block styles
+  link(rel="stylesheet", href="/css/form.css")
+
+block content
+  main
+    form.product-form(action='/login', method="POST")
+      .form-control
+        label(for="email") Email
+        input(type="email", name="email")#email
+
+        label(for="password") Password
+        input(type="password", name="password")#password
+
+        label(for="confirmPassword") Confirm Password
+        input(type="password", name="confirmPassword")#confirmPassword
+
+      button(type="submit") Signup
