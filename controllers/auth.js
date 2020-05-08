@@ -1,4 +1,7 @@
 const User = require('../models/user');
+const PasswordHasher = require('../services/password-hasher');
+
+const passwordHasher = new PasswordHasher();
 
 exports.getSignup = (req, res) => {
   res.render('auth/signup', {
@@ -8,8 +11,30 @@ exports.getSignup = (req, res) => {
   });
 };
 
-exports.postSignup = (req, res) => {
-  res.send('Signed up');
+exports.postSignup = async (req, res) => {
+  let { email, password } = req.body;
+
+  // @TODO: validate user input
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user) {
+      return res.redirect('/signup');
+    }
+
+    password = await passwordHasher.hash(password);
+
+    const newUser = new User({
+      email,
+      password,
+    });
+
+    await newUser.save();
+    res.redirect('/login');
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 
 exports.getLogin = (req, res) => {
