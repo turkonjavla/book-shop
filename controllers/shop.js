@@ -105,7 +105,7 @@ exports.postOrder = (req, res, next) => {
 
       const order = new Order({
         user: {
-          name: req.session.user.name,
+          email: req.session.user.email,
           userId: req.session.user, // mongoose will automatically pick the id
         },
         products,
