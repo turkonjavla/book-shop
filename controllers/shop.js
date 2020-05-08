@@ -58,7 +58,7 @@ exports.postCart = (req, res) => {
     .then(product => {
       return req.user.addToCart(product);
     })
-    .then(result => {
+    .then(() => {
       res.redirect('/cart');
     })
     .catch(err => console.error(err));
@@ -100,8 +100,8 @@ exports.postOrder = (req, res, next) => {
 
       const order = new Order({
         user: {
-          name: req.user.name,
-          userId: req.user, // mongoose will automatically pick the id
+          email: req.session.user.email,
+          userId: req.session.user, // mongoose will automatically pick the id
         },
         products,
       });
