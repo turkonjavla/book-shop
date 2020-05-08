@@ -1,7 +1,19 @@
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
 const User = require('../models/user');
 const PasswordHasher = require('../services/password-hasher');
+const { SENDGRID_API_KEY } = require('../keys');
 
 const passwordHasher = new PasswordHasher();
+
+const transporter = nodemailer.createTransport(
+  sendgridTransport({
+    auth: {
+      api_key: SENDGRID_API_KEY,
+    },
+  })
+);
 
 exports.getSignup = (req, res) => {
   let errorMessage = req.flash('error');
@@ -40,6 +52,14 @@ exports.postSignup = async (req, res) => {
     });
 
     await newUser.save();
+
+    await transporter.sendMail({
+      to: email,
+      from: 'turkonjavlada@gmail.com',
+      subject: 'Welcome to the book store!',
+      html: '<h1>Successfully signed up!</h1>',
+    });
+
     res.redirect('/login');
   } catch (error) {
     console.error(error.message);
