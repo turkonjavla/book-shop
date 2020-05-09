@@ -117,7 +117,7 @@ a {
 button,
 .btn-link {
   display: inline-block;
-  margin-top: 1rem;
+  margin: 1rem 0 1rem 0;
   font-size: 1.4rem;
   padding: 1rem;
   cursor: pointer;
@@ -133,8 +133,7 @@ button:not(:last-child) {
   margin-right: 2rem;
 }
 
-button:hover,
-a:hover {
+button:hover {
   background-color: #ffc107;
 }
 
@@ -142,4 +141,8 @@ a:hover {
   color: #ef5350;
   font-size: 1.6rem;
   margin-top: 2rem;
+}
+
+.reset-password-link {
+  font-size: 1.6rem;
 }

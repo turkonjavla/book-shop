@@ -1,9 +1,10 @@
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 const User = require('../models/user');
 const PasswordHasher = require('../services/password-hasher');
-const { SENDGRID_API_KEY } = require('../keys');
+const { SENDGRID_API_KEY, RESET_PASSWORD_EMAIL } = require('../keys');
 
 const passwordHasher = new PasswordHasher();
 
@@ -114,5 +115,58 @@ exports.postLogout = (req, res) => {
       console.error('Error when loging out: ', err.message);
     }
     res.redirect('/');
+  });
+};
+
+exports.getReset = (req, res) => {
+  let errorMessage = req.flash('error');
+
+  if (errorMessage.length > 0) {
+    errorMessage = errorMessage[0];
+  } else {
+    message = null;
+  }
+
+  res.render('auth/reset-password', {
+    path: '/reset',
+    pageTitle: 'Reset Password',
+    errorMessage,
+  });
+};
+
+exports.postReset = (req, res) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      return res.redirect('/reset');
+    }
+
+    const token = buffer.toString('hex');
+    console.log(token);
+
+    User.findOne({ email: req.body.email })
+      .then(user => {
+        if (!user) {
+          req.flash('error', 'No user with that email exists');
+          return res.redirect('/reset');
+        }
+
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000; // 1 hour
+
+        return user.save();
+      })
+      .then(() => {
+        transporter.sendMail({
+          to: req.body.email,
+          from: RESET_PASSWORD_EMAIL,
+          subject: 'Password Reset',
+          html: `
+              <p>Click on the link below to reset your password<p>
+              <a href='http://localhost:3000/${token}'>Click here</a>
+            `,
+        });
+        res.redirect('/');
+      })
+      .catch(err => console.error(err.message));
   });
 };
