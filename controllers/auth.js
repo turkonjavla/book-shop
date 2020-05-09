@@ -141,7 +141,6 @@ exports.postReset = (req, res) => {
     }
 
     const token = buffer.toString('hex');
-    console.log(token);
 
     User.findOne({ email: req.body.email })
       .then(user => {
@@ -179,7 +178,6 @@ exports.getNewPassword = (req, res) => {
     resetTokenExpiration: { $gt: Date.now() },
   })
     .then(user => {
-      console.log('User: ', token);
       let errorMessage = req.flash('error');
 
       if (errorMessage.length > 0) {
@@ -201,7 +199,6 @@ exports.getNewPassword = (req, res) => {
 
 exports.postNewPassword = async (req, res) => {
   let { userId, newPassword, passwordToken } = req.body;
-  console.log('Post req: ', req.body);
 
   try {
     const user = await User.findOne({

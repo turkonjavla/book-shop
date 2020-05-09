@@ -26,7 +26,7 @@ exports.postAddProduct = async (req, res) => {
 };
 
 exports.getProducts = (req, res) => {
-  Product.find()
+  Product.find({ userId: req.user._id })
     .then(products => {
       res.render('admin/admin-product-list', {
         prods: products,
@@ -64,7 +64,7 @@ exports.postEditProduct = (req, res) => {
   const { productId, title, price, imageUrl, description } = req.body;
 
   Product.findOneAndUpdate(
-    { _id: productId },
+    { _id: productId, userId: req.user._id },
     {
       $set: {
         title,
@@ -85,7 +85,7 @@ exports.postEditProduct = (req, res) => {
 
 exports.postDeleteProduct = (req, res) => {
   const productId = req.body.productId;
-  Product.findByIdAndDelete(productId).then(() =>
+  Product.deleteOne({ _id: productId, userId: req.user._id }).then(() =>
     res.redirect('/admin/products')
   );
 };
