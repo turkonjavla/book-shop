@@ -162,11 +162,62 @@ exports.postReset = (req, res) => {
           subject: 'Password Reset',
           html: `
               <p>Click on the link below to reset your password<p>
-              <a href='http://localhost:3000/${token}'>Click here</a>
+              <a href='http://localhost:3000/reset/${token}'>Click here</a>
             `,
         });
         res.redirect('/');
       })
       .catch(err => console.error(err.message));
   });
+};
+
+exports.getNewPassword = (req, res) => {
+  const token = req.params.token;
+
+  User.findOne({
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() },
+  })
+    .then(user => {
+      console.log('User: ', token);
+      let errorMessage = req.flash('error');
+
+      if (errorMessage.length > 0) {
+        errorMessage = errorMessage[0];
+      } else {
+        message = null;
+      }
+
+      res.render('auth/new-password', {
+        path: '/new-password',
+        pageTitle: 'New Password',
+        errorMessage,
+        userId: user._id.toString(),
+        passwordToken: token,
+      });
+    })
+    .catch(err => console.error(err.message));
+};
+
+exports.postNewPassword = async (req, res) => {
+  let { userId, newPassword, passwordToken } = req.body;
+  console.log('Post req: ', req.body);
+
+  try {
+    const user = await User.findOne({
+      resetToken: passwordToken,
+      resetTokenExpiration: { $gt: Date.now() },
+      _id: userId,
+    });
+
+    newPassword = await passwordHasher.hash(newPassword);
+    user.password = newPassword;
+    user.resetToken = null;
+    user.resetTokenExpiration = undefined;
+
+    await user.save();
+    res.redirect('/login');
+  } catch (error) {
+    console.error(error.message);
+  }
 };
