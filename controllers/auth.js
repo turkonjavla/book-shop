@@ -92,7 +92,6 @@ exports.postLogin = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!errors.isEmpty()) {
-      console.log(errors);
       return res.status(401).render('auth/login', {
         path: '/login',
         pageTitle: 'Login',
