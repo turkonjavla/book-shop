@@ -30,6 +30,9 @@ exports.getSignup = (req, res) => {
     path: '/signup',
     pageTitle: 'Signup',
     errorMessage,
+    oldInputData: {
+      email: '',
+    },
   });
 };
 
@@ -43,6 +46,9 @@ exports.postSignup = async (req, res) => {
         pageTitle: 'Signup',
         path: '/signup',
         errorMessage: errors.array()[0].msg,
+        oldInputData: {
+          email,
+        },
       });
     }
 
@@ -81,6 +87,9 @@ exports.getLogin = (req, res) => {
     path: '/login',
     pageTitle: 'Login',
     errorMessage,
+    oldInputData: {
+      email: '',
+    },
   });
 };
 
@@ -96,12 +105,22 @@ exports.postLogin = async (req, res) => {
         path: '/login',
         pageTitle: 'Login',
         errorMessage: errors.array()[0].msg,
+        oldInputData: {
+          email,
+        },
       });
     }
 
     if (!user) {
-      req.flash('error', 'Invalid email or password');
-      return res.redirect('/login');
+      console.log('No user triggered');
+      return res.status(401).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: 'Invalid email or password',
+        oldInputData: {
+          email,
+        },
+      });
     }
 
     if ((await passwordHasher.check(password, user.password)) === true) {
