@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
+const { validationResult } = require('express-validator');
 
 const User = require('../models/user');
 const PasswordHasher = require('../services/password-hasher');
@@ -34,15 +35,15 @@ exports.getSignup = (req, res) => {
 
 exports.postSignup = async (req, res) => {
   let { email, password } = req.body;
-
-  // @TODO: validate user input
+  const errors = validationResult(req);
 
   try {
-    const user = await User.findOne({ email });
-
-    if (user) {
-      req.flash('error', 'Email already taken.');
-      return res.redirect('/signup');
+    if (!errors.isEmpty()) {
+      return res.status(422).render('auth/signup', {
+        pageTitle: 'Signup',
+        path: '/signup',
+        errorMessage: errors.array()[0].msg,
+      });
     }
 
     password = await passwordHasher.hash(password);
@@ -85,8 +86,19 @@ exports.getLogin = (req, res) => {
 
 exports.postLogin = async (req, res) => {
   const { email, password } = req.body;
+  const errors = validationResult(req);
+
   try {
     const user = await User.findOne({ email });
+
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      return res.status(401).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: errors.array()[0].msg,
+      });
+    }
 
     if (!user) {
       req.flash('error', 'Invalid email or password');

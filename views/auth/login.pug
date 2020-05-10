@@ -5,7 +5,7 @@ block styles
 
 block content
   main
-    form.product-form(action='/login', method="POST")
+    form.product-form(action='/login', method="POST" novalidate)
       .form-control
         label(for="email") Email
         input(type="email", name="email")#email
