@@ -1,8 +1,5 @@
 const express = require('express');
 const chalk = require('chalk');
-const csrf = require('csurf');
-
-const User = require('./models/user');
 
 const { HTTP_PORT, HOST } = require('./keys');
 
@@ -20,7 +17,17 @@ const errorController = require('./controllers/error');
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+
+app.use('/500', errorController.get500);
 app.use(errorController.get404);
+
+app.use((error, req, res, next) => {
+  res.status(500).render('500', {
+    pageTitle: 'Error',
+    path: '/500',
+    isAuthenticated: req.session.isLoggedIn,
+  });
+});
 
 app.listen(HTTP_PORT, () => {
   console.log(
