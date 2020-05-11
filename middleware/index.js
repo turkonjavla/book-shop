@@ -43,10 +43,15 @@ const CommonMiddleware = app => {
 
     User.findById(req.session.user._id)
       .then(user => {
+        if (!user) {
+          return next();
+        }
         req.user = user;
         next();
       })
-      .catch(err => console.error(err.message));
+      .catch(err => {
+        next(new Error(err));
+      });
   });
   app.use((req, res, next) => {
     res.locals.isAuthenticated = req.session.isLoggedIn;

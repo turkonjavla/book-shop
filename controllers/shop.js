@@ -22,7 +22,12 @@ exports.getProducts = (req, res) => {
         path: '/products',
       });
     })
-    .catch(err => console.error(err.message));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
+    });
 };
 
 exports.getProductDetails = (req, res) => {
@@ -35,7 +40,12 @@ exports.getProductDetails = (req, res) => {
         path: '/products',
       });
     })
-    .catch(err => console.error(err.message));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
+    });
 };
 
 exports.getCart = (req, res) => {
@@ -61,7 +71,12 @@ exports.postCart = (req, res) => {
     .then(() => {
       res.redirect('/cart');
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
+    });
 };
 
 exports.postRemoveProductFromCart = (req, res) => {
@@ -69,7 +84,12 @@ exports.postRemoveProductFromCart = (req, res) => {
   req.user
     .removeFromCart(productId)
     .then(() => res.redirect('/cart'))
-    .catch(err => console.error(err.message));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
+    });
 };
 
 exports.getCheckout = (req, res) => {
@@ -111,9 +131,10 @@ exports.postOrder = (req, res, next) => {
       req.user.clearCart();
     })
     .then(() => res.redirect('/orders'))
-    .catch(err =>
-      console.error(
-        chalk.redBright('Error wehn creating an order. ', err.message)
-      )
-    );
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
+    });
 };

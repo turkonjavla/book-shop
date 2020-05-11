@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 
 const Product = require('../models/product');
 
@@ -13,9 +14,12 @@ exports.getAddProduct = (req, res) => {
   });
 };
 
-exports.postAddProduct = async (req, res) => {
+exports.postAddProduct = async (req, res, next) => {
   const userId = req.user;
-  const product = new Product({ ...req.body, userId });
+  const product = new Product({
+    ...req.body,
+    userId,
+  });
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -41,7 +45,10 @@ exports.postAddProduct = async (req, res) => {
     })
     .catch(err => {
       console.error(chalk.redBright(err.message));
-      res.redirect('/admin/add-product');
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
     });
 };
 
@@ -54,7 +61,12 @@ exports.getProducts = (req, res) => {
         path: '/admin/products',
       });
     })
-    .catch(err => console.error(chalk.redBright(err.message)));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
+    });
 };
 
 exports.getEditProduct = (req, res) => {
@@ -79,7 +91,12 @@ exports.getEditProduct = (req, res) => {
         errorMessage: null,
       });
     })
-    .catch(err => console.error(calk.redBright(err.message)));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
+    });
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -119,7 +136,15 @@ exports.postEditProduct = (req, res, next) => {
       product.imageUrl = updatedImageUrl;
       return product.save().then(() => res.redirect('/admin/products'));
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      console.error(
+        chalk.redBright('Error when editing a product', err.message)
+      );
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+
+      return next(error);
+    });
 };
 
 exports.postDeleteProduct = (req, res) => {
