@@ -9,10 +9,15 @@ router.get('/login', authController.getLogin);
 router.post(
   '/login',
   [
-    body('email').isEmail().withMessage('Please enter a valid email'),
-    body('password', 'Password must be at least 5 characters long').isLength({
-      min: 5,
-    }),
+    body('email')
+      .isEmail()
+      .withMessage('Please enter a valid email')
+      .normalizeEmail(),
+    body('password', 'Password must be at least 5 characters long')
+      .trim()
+      .isLength({
+        min: 5,
+      }),
   ],
   authController.postLogin
 );
@@ -24,6 +29,7 @@ router.post(
     check('email')
       .isEmail()
       .withMessage('Please enter a valid email')
+      .normalizeEmail()
       .custom(async value => {
         return User.findOne({ email: value }).then(user => {
           if (user) {
@@ -31,15 +37,17 @@ router.post(
           }
         });
       }),
-    body('password', 'Password must be at least 5 characters').isLength({
+    body('password', 'Password must be at least 5 characters').trim().isLength({
       min: 5,
     }),
-    body('confirmPassword').custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error(`Passwords don't match`);
-      }
-      return true;
-    }),
+    body('confirmPassword')
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error(`Passwords don't match`);
+        }
+        return true;
+      }),
   ],
   authController.postSignup
 );

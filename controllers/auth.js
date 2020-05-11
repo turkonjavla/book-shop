@@ -97,19 +97,19 @@ exports.postLogin = async (req, res) => {
   const { email, password } = req.body;
   const errors = validationResult(req);
 
+  if (!errors.isEmpty()) {
+    return res.status(401).render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      errorMessage: errors.array()[0].msg,
+      oldInputData: {
+        email,
+      },
+    });
+  }
+
   try {
     const user = await User.findOne({ email });
-
-    if (!errors.isEmpty()) {
-      return res.status(401).render('auth/login', {
-        path: '/login',
-        pageTitle: 'Login',
-        errorMessage: errors.array()[0].msg,
-        oldInputData: {
-          email,
-        },
-      });
-    }
 
     if (!user) {
       console.log('No user triggered');
@@ -118,7 +118,7 @@ exports.postLogin = async (req, res) => {
         pageTitle: 'Login',
         errorMessage: 'Invalid email or password',
         oldInputData: {
-          email,
+          email: email,
         },
       });
     }
