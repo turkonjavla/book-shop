@@ -3,7 +3,7 @@ extends ../layouts/main-layout.pug
 block content
   main.centered
     .product__detail
-      img.product__detail--image(src=`${product.imageUrl}`, alt=`${product.title}`)
+      img.product__detail--image(src=`/${product.imageUrl}`, alt=`${product.title}`)
 
       div
         h1.product__detail--title #{product.title}

@@ -7,7 +7,7 @@ block content
         article.card.product-item
           header.card__header
             h1.product__title #{product.title}
-            img.card__image(src=product.imageUrl, alt=product.title)
+            img.card__image(src=`/${product.imageUrl}`, alt=product.title)
           .card__content
             .card-details
               h2.product__price $#{product.price}

@@ -16,11 +16,30 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = async (req, res, next) => {
   const userId = req.user;
+  const image = req.file;
+
+  const imageUrl = image.path;
   const product = new Product({
     ...req.body,
+    imageUrl,
     userId,
   });
   const errors = validationResult(req);
+
+  if (!image) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add product',
+      path: '/admin/edit-product',
+      editing: false,
+      hasError: true,
+      product: {
+        title: req.body.title,
+        price: req.body.price,
+        description: req.body.description,
+      },
+      errorMessage: 'Attached file is not an image',
+    });
+  }
 
   if (!errors.isEmpty()) {
     return res.status(422).render('admin/edit-product', {
@@ -30,7 +49,6 @@ exports.postAddProduct = async (req, res, next) => {
       hasError: true,
       product: {
         title: req.body.title,
-        imageUrl: req.body.imageUrl,
         price: req.body.price,
         description: req.body.description,
       },
@@ -103,7 +121,7 @@ exports.postEditProduct = (req, res, next) => {
   const productId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
+  const image = req.file;
   const updatedDesc = req.body.description;
 
   const errors = validationResult(req);
@@ -133,7 +151,9 @@ exports.postEditProduct = (req, res, next) => {
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDesc;
-      product.imageUrl = updatedImageUrl;
+      if (image) {
+        product.imageUrl = image.path;
+      }
       return product.save().then(() => res.redirect('/admin/products'));
     })
     .catch(err => {

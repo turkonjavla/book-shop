@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const multer = require('multer');
 const MongoDBStore = require('connect-mongodb-session')(session);
 
 const { MONGO_URI } = require('../keys');
@@ -19,13 +20,33 @@ const store = new MongoDBStore({
   collection: 'sessions',
 });
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'images');
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${new Date().toISOString()}-${file.originalname}`);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 const CommonMiddleware = app => {
   app.use(cors());
   app.use(helmet());
   app.use(morgan('dev'));
   app.set('view engine', 'pug');
-  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(express.static(path.join(__dirname, '..', 'public')));
+  app.use('/images', express.static(path.join(__dirname, '..', 'images')));
   app.use(
     session({
       secret: 'secret',
@@ -34,6 +55,8 @@ const CommonMiddleware = app => {
       store,
     })
   );
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(multer({ storage, fileFilter }).single('image'));
   app.use(csrfProtection);
   app.use(flash());
   app.use((req, res, next) => {
