@@ -14,11 +14,12 @@ block content
         table(style='width:100%', border='1')
               thead
                 tr
-                  th Item
+                  th
+                    a(href=`/orders/${order._id}`) Invoice - #{order._id}
                   th Quantity
               tbody
                 each item in order.products
 
                     tr
                       td #{item.product.title}
-                      td #{item.quantity}  
+                      td #{item.quantity}
