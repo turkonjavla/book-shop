@@ -1,4 +1,6 @@
 const chalk = require('chalk');
+const fs = require('fs');
+const path = require('path');
 
 const Product = require('../models/product');
 const Order = require('../models/order');
@@ -137,4 +139,37 @@ exports.postOrder = (req, res, next) => {
 
       return next(error);
     });
+};
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'invoice-' + orderId + '.pdf';
+  const invoicePath = path.join('data', 'invoices', invoiceName);
+
+  Order.findById(orderId)
+    .then(order => {
+      if (!order) {
+        return next(new Error('No order found'));
+      }
+
+      console.log(order.user.userId.toString());
+      console.log(req.user._id.toString());
+
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        return next(new Error('Error when comapring'));
+      }
+
+      fs.readFile(invoicePath, (err, data) => {
+        if (err) {
+          return next(err);
+        }
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader(
+          'Content-Disposition',
+          'inline; filename="' + invoiceName + '"'
+        );
+        res.send(data);
+      });
+    })
+    .catch(err => console.error('Error when getting invoice. ', err.message));
 };
