@@ -178,7 +178,6 @@ exports.getInvoice = (req, res, next) => {
       let totalPrice = 0;
 
       order.products.forEach(product => {
-        console.log(product);
         totalPrice += product.quantity * product.product.price;
         pdfDoc
           .fontSize(14)

@@ -1,6 +1,6 @@
 const chalk = require('chalk');
 const { validationResult } = require('express-validator');
-const mongoose = require('mongoose');
+const fileHelper = require('../utils/fileUtil');
 
 const Product = require('../models/product');
 
@@ -17,13 +17,7 @@ exports.getAddProduct = (req, res) => {
 exports.postAddProduct = async (req, res, next) => {
   const userId = req.user;
   const image = req.file;
-
-  const imageUrl = image.path;
-  const product = new Product({
-    ...req.body,
-    imageUrl,
-    userId,
-  });
+  const imageUrl = image ? image.path : null;
   const errors = validationResult(req);
 
   if (!image) {
@@ -55,6 +49,12 @@ exports.postAddProduct = async (req, res, next) => {
       errorMessage: errors.array()[0].msg,
     });
   }
+
+  const product = new Product({
+    ...req.body,
+    imageUrl,
+    userId,
+  });
 
   product
     .save()
@@ -152,6 +152,7 @@ exports.postEditProduct = (req, res, next) => {
       product.price = updatedPrice;
       product.description = updatedDesc;
       if (image) {
+        fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
       return product.save().then(() => res.redirect('/admin/products'));
@@ -169,7 +170,15 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res) => {
   const productId = req.body.productId;
-  Product.deleteOne({ _id: productId, userId: req.user._id }).then(() =>
-    res.redirect('/admin/products')
-  );
+  Product.findById(productId)
+    .then(product => {
+      if (!product) {
+        return next(new Error('Product not found'));
+      }
+      console.log(product.imageUrl);
+      fileHelper.deleteFile(product.imageUrl);
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
+    .then(() => res.redirect('/admin/products'))
+    .catch(err => console.error(err));
 };
