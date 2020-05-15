@@ -146,3 +146,17 @@ button:hover {
 .reset-password-link {
   font-size: 1.6rem;
 }
+
+.pagination {
+  display: flex;
+  font-size: 1.6rem;
+  justify-content: center;
+}
+
+.pagination a {
+  margin: 2rem;
+}
+
+.pagination .active {
+  background-color: #ffab00;
+}
