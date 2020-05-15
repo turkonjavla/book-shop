@@ -168,17 +168,19 @@ exports.postEditProduct = (req, res, next) => {
     });
 };
 
-exports.postDeleteProduct = (req, res) => {
-  const productId = req.body.productId;
+exports.deleteProduct = (req, res) => {
+  const productId = req.params.productId;
   Product.findById(productId)
     .then(product => {
       if (!product) {
         return next(new Error('Product not found'));
       }
-      console.log(product.imageUrl);
+
       fileHelper.deleteFile(product.imageUrl);
       return Product.deleteOne({ _id: productId, userId: req.user._id });
     })
-    .then(() => res.redirect('/admin/products'))
-    .catch(err => console.error(err));
+    .then(() => {
+      res.status(200).json({ message: 'success' });
+    })
+    .catch(err => res.status(500).json({ message: `Deleting failed, ${err}` }));
 };
