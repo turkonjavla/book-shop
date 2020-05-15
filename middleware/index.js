@@ -56,6 +56,7 @@ const CommonMiddleware = app => {
     })
   );
   app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
   app.use(multer({ storage, fileFilter }).single('image'));
   app.use(csrfProtection);
   app.use(flash());
