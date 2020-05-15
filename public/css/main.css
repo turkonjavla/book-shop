@@ -155,8 +155,10 @@ button:hover {
 
 .pagination a {
   margin: 2rem;
+  border-radius: 5px;
 }
 
 .pagination .active {
   background-color: #ffab00;
+  padding: 1rem;
 }
